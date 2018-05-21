@@ -1,11 +1,14 @@
 @import 'styles/lib/animate';
 
-@import 'styles/mixins/flex';
+@import 'styles/mixins';
 @import 'styles/colors';
 @import 'styles/base';
 @import 'styles/alerts';
 
+@import 'styles/components/login';
+@import 'styles/components/sidebar';
 @import 'styles/components/nav';
 @import 'styles/components/editor';
-@import 'styles/components/sidebar';
+@import 'styles/components/toolbar';
+@import 'styles/components/note-list';
 @import 'styles/components/textarea';

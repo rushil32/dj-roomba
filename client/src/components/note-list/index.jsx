@@ -1,21 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import tagColors from '../../util/tagColors';
 
-class NoteSidebar extends Component {
-  static propTypes = {
-    notes: PropTypes.object,
-    activeNote: PropTypes.object,
-    selectNote: PropTypes.func,
-    setActiveNote: PropTypes.func,
-  }
-
-  static defaultProps = {
-    notes: [],
-    activeNote: {},
-  }
-
+class Sidebar extends Component {
   parseNoteText = (content) => {
+    if (!content) return '';
+
     const noteContent = JSON.parse(content);
     return noteContent.blocks[0].text;
   }
@@ -24,11 +14,15 @@ class NoteSidebar extends Component {
 
   noteItem = (note, index, parse = true) => {
     const createdOn = new Date(note.createdOn);
+    const tagColor = tagColors[this.props.tags.indexOf(note.tag)];
 
     return (
       <li key={note._id} className={ index === this.props.activeNote ? 'active' : ''}>
         <div onClick={() => this.props.getNote(index)}>
-          <h3>{ note.title }</h3>
+          <div className="note-list__item__header">
+            <h3>{ note.title }</h3>
+            { note.tag && (<span style={{ backgroundColor: tagColor }} />) }
+          </div>
           <p>{ parse ? this.parseNoteText(note.text) : note.text }</p>
           <p className="timestamp">{ createdOn.toDateString() }</p>
         </div>
@@ -43,14 +37,13 @@ class NoteSidebar extends Component {
     const today = new Date();
     
     return (
-      <div className="sidebar note-sidebar">
-        <button className="btn btn-block btn-primary" onClick={() => this.props.setActiveNote(-1)}>New note</button>
+      <div className="note-list">
         <ul>
           { notes.length > 0 && (this.noteList(notes)) }
           { (notes.length === 0) && (this.noteItem({
               title: 'New note',
               text: 'Your first note',
-              createdOn: today.toDateString(),
+              createdOn: today,
           }, -1, false))}
         </ul>
       </div>
@@ -58,4 +51,17 @@ class NoteSidebar extends Component {
   }
 }
 
-export default NoteSidebar;
+Sidebar.propTypes = {
+  notes: PropTypes.array,
+  activeNote: PropTypes.number,
+  selectNote: PropTypes.func,
+  tags: PropTypes.array
+}
+
+Sidebar.defaultProps = {
+  notes: [],
+  tags: [],
+  activeNote: -1,
+}
+
+export default Sidebar;

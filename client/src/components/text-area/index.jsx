@@ -1,10 +1,13 @@
 import React from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import Editor from 'draft-js-plugins-editor';
 import blockStyles from './blockStyles';
 import keyBindings from './keyBindings';
+import TagDropdown from '../tag-dropdown';
+import HeaderInput from './HeaderInput';
+import { getRawState, editorHasText } from '../../util/editorHelpers';
 import { EditorState, RichUtils, convertFromRaw } from 'draft-js';
+import logo from '../../assets/origami-logo.svg';
 
 class TextEditor extends React.Component {
   constructor(props) {
@@ -15,11 +18,13 @@ class TextEditor extends React.Component {
 
   static propTypes = {
     note: PropTypes.object,
-    handleSave: PropTypes.func
+    updateNote: PropTypes.func,
+    tags: PropTypes.array
   }
 
   static defaultProps = {
     note: {},
+    tags: []
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -32,40 +37,19 @@ class TextEditor extends React.Component {
     }
   }
 
-  componentDidMount(){
-    this.focusEditor();
-  }
+  componentDidMount(){ this.focusEditor(); }
 
-  focusEditor = () => {
-    this.domEditor.focus();
-  }
+  focusEditor = () => { this.domEditor.focus(); }
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    this.props.handleInput(editorState);
+
+    if (editorHasText(editorState)) {
+      this.props.updateNote({
+        text: getRawState(editorState) 
+      });
+    }
   };
-
-  handleKeyCommand = (command, editorState) => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (command === 'myeditor-save') {
-      this.props.handleSave(editorState);
-      return 'handled';
-    }
-
-    // if (command === 'tab-space') {
-    //   const newEditorState = RichUtils.onTab(e, this.state.editorState, 4);
-    //   if (newEditorState !== this.state.editorState) {
-    //     this.onChange(newEditorState);
-    //   }
-    // }
-
-    if (newState) {
-      this.onChange(newState);
-      return 'handled';
-    }
-
-    return 'not-handled';
-  }
 
   onUnderlineClick = () => this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'));
 
@@ -75,20 +59,26 @@ class TextEditor extends React.Component {
 
   toolBar = () => (
     <div className="toolbar">
+      <a className="toolbar__logo" href="/">
+        <img src={logo} alt="Pigeon" />
+      </a>
       <button onClick={this.onUnderlineClick}><u>U</u></button>
       <button onClick={this.onBoldClick.bind(this)}><b>B</b></button>
       <button onClick={this.onToggleCode}>&lt;&nbsp;&gt;</button>
+      <TagDropdown handleClick={this.props.setTag} tags={this.props.tags} active={this.props.note.tag} />
     </div>
   )
 
   render() {
+    const { updateNote, note } = this.props;
+
     return (
       <div className="text-area">
         <this.toolBar />
+        <HeaderInput value={note.title} handleInput={updateNote} />
         <div className = "text-area__input" onClick={this.focusEditor}>
           <Editor
             editorState={this.state.editorState}
-            handleKeyCommand={this.handleKeyCommand}
             keyBindingFn={keyBindings}
             onChange={this.onChange}
             blockStyleFn={blockStyles}

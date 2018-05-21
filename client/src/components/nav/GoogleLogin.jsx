@@ -1,11 +1,8 @@
 import React from 'react';
-import axios from 'axios';
-import cookie from 'js-cookie';
 import { authWithServer } from '../../util/userHelpers';
 
 class LoginButton extends React.Component {
   onSignIn = (googleUser) => {
-    const profile = googleUser.getBasicProfile();
     const id_token = googleUser.getAuthResponse().id_token;
 
     authWithServer(id_token).then(res => this.props.setUserData(res));

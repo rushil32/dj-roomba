@@ -1,21 +1,19 @@
 import React from 'react';
 import MaterialIcon from 'material-icons-react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 
 import GoogleLogin from './GoogleLogin';
-import ShareModal from './ShareModal';
-import DeleteModal from './DeleteModal';
-import { deleteNote } from '../../util/noteHelpers';
-import logo from '../../assets/pigeon-logo.svg';
+import tagColors from '../../util/tagColors';
 
 class Nav extends React.Component {
   static propTypes = {
     userData: PropTypes.object,
+    usedFilters: PropTypes.array
   }
 
   static defaultProps = {
-    userData: {}
+    userData: {},
+    usedFilters: []
   }
 
   NavItem = (icon, tooltip, modalName) => (
@@ -33,46 +31,49 @@ class Nav extends React.Component {
     </li>
   )
 
-  LoginButton = () => {
-    const { userData, setUserData } = this.props;
+  UserImage = () => (
+    <li className="nav-item">
+      <img alt="User" src={this.props.userData.image} />
+    </li>
+  )
+  
+  NewNoteButton = () => (
+    <li>
+      <button className="btn btn-block btn-primary" onClick={() => this.props.setActiveNote(-1)}>
+        <i className="material-icons">create</i>
+      </button>
+    </li>
+  )
 
-    return (
-      <li className="nav-item">
-        <div>
-          { userData.email
-              ? (<img src={userData.image} />)
-              : (<GoogleLogin setUserData={setUserData} />)
-          }
-        </div>
-      </li>
-    )
+  TagList = (allTags=[], usedTags=[]) => {
+    return usedTags.map(tag => {
+      const color = tagColors[allTags.indexOf(tag)];
+      
+      return (
+        <li 
+          onClick={() => this.props.toggleFilter(tag)}
+          className={this.props.usedFilters.indexOf(tag) > -1 ? 'active' : ''}
+        >
+          <span style={{backgroundColor: color}} />
+        </li>
+      ) 
+    })
   }
 
   render() {
-    const { userData } = this.props;
+    const { userData, allTags, usedTags } = this.props;
 
     return (
-      <div>
-        { !userData.email && (
-          <div className="alert alert-warning" role="alert">
-            Sign in to start saving notes, it'll only take a second!
-          </div>
-        )}
-        <nav className="navbar navbar-expand-lg navbar-light">
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a className="navbar-brand" href="/">
-              <img src={logo} alt="Pigeon" />
-            </a>
-            <div className="mr-auto" />
-            <ul className="navbar-nav">
-              { this.NavItem('share', 'Share note', 'shareModal') }
-              { this.NavItem('delete', 'Delete note', 'deleteModal') }
-              { this.LoginButton() }
-            </ul>
-          </div>
-        </nav>
-        <ShareModal updateNotes={this.props.updateNotes} />
-        <DeleteModal handleClick={this.props.delete} />
+      <div className="navbar">
+        <ul className="navbar-nav">
+          { this.NewNoteButton() }
+          { this.UserImage() }
+          { this.NavItem('share', 'Share note', 'shareModal') }
+          { this.NavItem('delete', 'Delete note', 'deleteModal') }
+        </ul>
+        <ul className="navbar-tags">
+          { this.TagList(allTags, usedTags) }
+        </ul>
       </div>
     );
   }

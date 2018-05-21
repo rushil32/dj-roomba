@@ -1,4 +1,4 @@
 module.exports = {
   tokenSecret: 'supersecret',
-  dbUrl: 'mongodb://rushil:gaboosh@ds131432.mlab.com:31432/gaboosh',
+  dbUrl: 'mongodb://rushil:thirdeye@ds231090.mlab.com:31090/dj-roomba',
 };

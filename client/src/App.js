@@ -2,9 +2,8 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import logo from "./logo.svg";
 import Editor from './components/editor';
-import Nav from './components/nav';
+import Login from './components/login';
 import "./App.css";
 
 
@@ -25,16 +24,11 @@ class App extends Component {
   componentDidMount() { this.getUserData(); }
 
   render() {
-    return (
-      <Router>
-        <div className="App">
-          <Route path ="/" component={(props) => (
-              <Editor {...props} userData={this.state.userData} setUserData={this.setUserData} />
-            )}
-          />
-        </div>
-      </Router>
-    );
+    const { userData } = this.state;
+    
+    return userData.email 
+            ? (<Editor userData={userData} setUserData={this.setUserData} />)
+            : (<Login userData={userData} setUserData={this.setUserData} />);
   }
 }
 

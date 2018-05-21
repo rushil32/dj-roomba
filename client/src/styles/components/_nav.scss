@@ -1,33 +1,73 @@
 .navbar {
-  input {
-    border-radius: 40px;
-  }
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  background: white;
+  padding: 0;
+  border-right: 1px solid $light-grey-1;
   
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
   .nav-item {
-    margin-left: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 0 15px;
 
     img {
       border-radius: 50%;
-      margin-top: 8px;
       height: 35px;
     }
   }
 
+  .btn-primary {
+    border-radius: 0;
+    margin-bottom: 30px;
+    background-color: $watermelon;
+    border: none;
+    padding: 0.5rem .75rem;
+  }
+
   .navbar-brand img {
-    max-height: 23px;
+    max-height: 30px;
+    margin: 0;
   }
 
   .nav-link {
-    opacity: 0.6;
+    opacity: 0.3;
     transition: 0.2s;
 
     i {
-      margin-top: 5px;
+      margin-top: 3px;
+      color: $dark-grey-1;
     }
 
     &:hover {
-      opacity: 0.9;
+      opacity: 1;
       cursor: pointer;
+    }
+  }
+
+  &-tags {
+    width: 100%;
+
+    li {
+      text-align: center;
+      padding: 15px;
+    }
+
+    li:hover, li.active {
+      background-color: $light-grey-3;
+      cursor: pointer;
+    }
+
+    span {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      display: inline-block;
     }
   }
 }

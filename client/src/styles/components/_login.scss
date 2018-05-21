@@ -1,0 +1,35 @@
+.login {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('assets/login-bg.jpg');
+  background-size: cover;
+  background-position: center; 
+  
+  &__box {
+    margin-top: -7%;
+    text-align: center;
+    
+    h1 {
+      margin-bottom: 0px;
+    }
+
+    .abcRioButton {
+      margin: 30px auto 0;
+      box-shadow: none;
+      border: 1px solid $light-grey-1;
+    }
+
+    .abcRioButton:hover {
+      box-shadow: none;
+      background-color: rgba(0,0,0,0.03);
+    }
+  }
+
+  &__logo {
+    max-height: 110px;
+    margin-bottom: 20px;
+  }
+}

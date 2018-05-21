@@ -1,4 +1,4 @@
-import { EditorState, SelectionState, convertToRaw } from 'draft-js';
+import { convertToRaw } from 'draft-js';
 
 export function getRawState(editorState) {
   return JSON.stringify(convertToRaw(editorState.getCurrentContent()));

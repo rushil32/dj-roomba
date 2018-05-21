@@ -7,6 +7,10 @@ router.get('/:noteId', noteCtrl.getNote);
 
 router.get('/user/:userId', noteCtrl.getUserNotes);
 
+router.get('/tags', noteCtrl.getTags);
+
+router.put('/tags/:noteId', noteCtrl.setTag);
+
 router.post('/', noteCtrl.create);
 
 router.put('/:noteId', noteCtrl.update);

@@ -1,4 +1,4 @@
-import { getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
+import { getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
 
 export default function customKeyBinding(e) {
   const { hasCommandModifier } = KeyBindingUtil;

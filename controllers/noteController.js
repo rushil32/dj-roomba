@@ -1,6 +1,7 @@
 const Note = require('../models/Note');
 const userCtrl = require('./userController');
 const authCtrl = require('./authController');
+const { ObjectId } = require('mongoose').Types;
 
 function sendUserNotes(req, res) {
   const { token } = req.cookies;
@@ -35,15 +36,6 @@ exports.create = (req, res) => {
   }
 };
 
-exports.update = (req, res) => {
-  const { noteId } = req.params;
-  const { title, text, tag } = req.body;
-
-  Note.findOneAndUpdate({ _id: noteId }, { title, text, tag }, (err, note) => {
-    res.send(note);
-  });
-};
-
 exports.getNote = (req, res) => {
   const { noteId } = req.params;
 
@@ -52,6 +44,36 @@ exports.getNote = (req, res) => {
     .exec((err, note) => {
       res.send(note);
     });
+};
+
+exports.update = (req, res) => {
+  const { noteId } = req.params;
+  const { title, text } = req.body;
+
+  Note.findOneAndUpdate({ _id: noteId }, { title, text }, { new: true }, (err, note) => {
+    res.send(note);
+  });
+};
+
+exports.getTags = (req, res) => {
+  const { token } = req.cookies;
+  const userId = authCtrl.verifyToken(token);
+
+  Note
+    .find({ author: new ObjectId(userId) })
+    .exec((err, notes) => {
+      const tags = notes.map(note => note.tag);
+      res.send(tags);
+    });
+};
+
+exports.setTag = (req, res) => {
+  const { noteId } = req.params;
+  const { tag } = req.body;
+
+  Note.findOneAndUpdate({ _id: noteId }, { tag }, { new: true }, (err, note) => {
+    res.send(note);
+  });
 };
 
 exports.getUserNotes = (req, res) => {
