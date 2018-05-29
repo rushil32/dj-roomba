@@ -85,14 +85,19 @@ class Party extends React.Component {
   resumePlayback = (currentState) => {
     const { currentTrack } = this.state;
     
-    if (currentState.is_playing === false || 
-        currentTrack.trackId !== currentState.item.id) {
+    if (
+      currentState.is_playing === false || 
+      currentTrack.trackId !== currentState.item.id
+    ) {
       this.startPlay();
     }
   }
 
   startPlay = () => {
-    this.setState({ playActive: true });
+    this.setState({ 
+      playActive: true,
+      showAlert: false,
+    });
     
     const { partyInfo } = this.state;
     const playList = this.sortTracks(partyInfo.tracks);
@@ -114,7 +119,7 @@ class Party extends React.Component {
 
   stopPlay = () => {
     spotifyUtil.pauseTrack();
-    this.setState({ playActive: false });
+    this.setState({ playActive: false, showAlert: false });
   }
 
   render() {
