@@ -39,6 +39,12 @@ class Party extends React.Component {
       }
     })
 
+    socket.on('add-track', (partyId) => {
+      if (this.state.partyInfo._id === partyId) {
+        setTimeout(this.getPartyInfo, 100);
+      }
+    })
+
     this.setState({ socket });
   }
 
@@ -60,6 +66,8 @@ class Party extends React.Component {
       .addTrack(this.state.partyInfo._id, trackData)
       .then(res => {
         this.setState({ partyInfo: res })
+        this.state.socket.emit('add-track', res._id);
+
         return spotifyUtil.getPlayerStatus();
       })
       .then(res => {
@@ -86,6 +94,8 @@ class Party extends React.Component {
   }
 
   startPlay = () => {
+    this.setState({ playActive: true });
+    
     const { partyInfo } = this.state;
     const playList = this.sortTracks(partyInfo.tracks);
     
@@ -98,7 +108,6 @@ class Party extends React.Component {
     .then(res => this.setState({ partyInfo: res, currentTrack: nextTrack, showError: false }))
     .catch(err => this.toggleError('Could not connect to Spotify. To connect make sure your app is open and playing music.'));
     
-    this.setState({ playActive: true });
     this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
   }
 
