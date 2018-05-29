@@ -12,8 +12,6 @@ import Alert from '../common/Alert';
 import PlayControls from './playControls';
 import io from 'socket.io-client';
 
-const socketUrl = 'http://localhost:5000';
-
 class Party extends React.Component {
   constructor(props) {
     super(props);
@@ -31,7 +29,7 @@ class Party extends React.Component {
   }
 
   initSocket = () => {
-    const socket = io(socketUrl);
+    const socket = io();
 
     socket.on('vote', (partyId, trackId) => {
       if (this.state.partyInfo._id === partyId) {
@@ -106,7 +104,10 @@ class Party extends React.Component {
     spotifyUtil.playTrack(nextTrack.trackId)
     .then(res => partyUtil.removeTrack(partyInfo._id, nextTrack._id))
     .then(res => this.setState({ partyInfo: res, currentTrack: nextTrack, showError: false }))
-    .catch(err => this.toggleError('Could not connect to Spotify. To connect make sure your app is open and playing music.'));
+    .catch(err => {
+      console.log(err);
+      this.toggleError('Could not connect to Spotify. To connect make sure your app is open and playing music.');
+    });
     
     this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
   }
@@ -117,7 +118,7 @@ class Party extends React.Component {
   }
 
   render() {
-    const { partyInfo, showSearch, currentTrack, showAlert, errorText, playActive } = this.state;
+    const { partyInfo, showSearch, currentTrack, showAlert, alertText, playActive } = this.state;
     const isHost = this.props.userInfo._id && (this.props.userInfo._id === partyInfo.host);
     const partyClass = playActive ? 'party active' : 'party';
 
@@ -138,7 +139,7 @@ class Party extends React.Component {
           tracks={this.sortTracks(partyInfo.tracks || [])}
           handleVote={this.vote}
         />
-        <Alert text={errorText} toggle={showAlert} />
+        <Alert text={alertText} toggle={showAlert} />
         <PlayControls
           startPlay={this.startPlay}
           stopPlay={this.stopPlay}
