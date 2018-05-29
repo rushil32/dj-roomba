@@ -1,0 +1,23 @@
+.dash {
+  padding-top: 10vh;
+  height: 100vh;
+  background: url('assets/dash-bg.jpg') no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+
+  &-card {
+    max-width: 550px;
+    margin: 0 auto 30px;
+    padding: 20px;
+    border-radius: 4px;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+}

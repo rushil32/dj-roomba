@@ -1,61 +1,105 @@
-const jwt = require('jsonwebtoken');
-const { OAuth2Client } = require('google-auth-library');
-const config = require('../config');
+const querystring = require('querystring');
+const request = require('request');
 
-const CLIENT_ID = '460346450717-0u34rlrkph28bgrl6at9p0747e2qfoir.apps.googleusercontent.com';
-const client = new OAuth2Client(CLIENT_ID);
+const { spotify } = require('../config');
 
 const userCtrl = require('./userController');
 
-async function verifyUser(token) {
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: CLIENT_ID,
+exports.spotifyAuth = (req, res) => {
+  res.send({
+    url: `https://accounts.spotify.com/authorize?${querystring.stringify({
+      response_type: 'code',
+      client_id: spotify.clientId,
+      scope: spotify.scope,
+      redirect_uri: spotify.redirectUri,
+    })}`,
   });
+};
 
-  const payload = ticket.getPayload();
-  const userId = payload.sub;
-  const firstName = payload.given_name;
-  const lastName = payload.family_name;
-  const image = payload.picture;
-  const { email } = payload;
+function getSpotifyUser(accessToken) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      url: 'https://api.spotify.com/v1/me',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      json: true,
+    };
 
-  const user = await userCtrl.createUser({
-    userId,
-    email,
-    firstName,
-    lastName,
-    image,
+    request.get(options, (error, response, body) => {
+      if (body.error) reject(body.error.status);
+      resolve(body);
+    });
   });
-
-  return user;
 }
 
-exports.verifyToken = (token) => {
-  if (!token) return false;
+function refreshSpotifyToken(refreshToken) {
+  return new Promise((resolve, reject) => {
+    const authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      headers: { 'Authorization': 'Basic ' + (new Buffer(spotify.clientId + ':' + spotify.secret).toString('base64')) },
+      form: {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      },
+      json: true,
+    };
 
-  try {
-    const decoded = jwt.verify(token, config.tokenSecret);
-    return decoded.id;
-  } catch (err) {
-    return false;
+    request.post(authOptions, (error, response, body) => {
+      if (!error && response.statusCode === 200) {
+        const access_token = body.access_token;
+        resolve(access_token);
+      }
+    });
+  });
+};
+
+exports.getUserInfo = (req, res) => {
+  const { spotify_access, spotify_refresh } = req.cookies;
+  let newToken = '';
+
+  if (spotify_refresh) {
+    refreshSpotifyToken(spotify_refresh)
+      .then((accessToken) => {
+        newToken = accessToken;
+        return getSpotifyUser(accessToken);
+      })
+      .then(user => userCtrl.getSpotifyUser(user.id))
+      .then(user => res.send({
+        newToken,
+        user,
+      }));
   }
 };
 
-exports.authenticate = (req, res) => {
-  const { idtoken } = req.body;
-  const TWO_DAYS = 86400 * 2;
+exports.spotifyLogin = (req, res) => {
+  const code = req.body.code || null;
 
-  verifyUser(idtoken)
-    .then((user) => {
-      const token = jwt.sign({ id: user._id }, config.tokenSecret, {
-        expiresIn: TWO_DAYS,
-      });
-      res.status(200).send({
-        auth: true,
-        token,
-        user,
-      });
-    })
-    .catch(console.error);
+  const authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      code,
+      redirect_uri: spotify.redirectUri,
+      grant_type: 'authorization_code',
+    },
+    headers: {
+      Authorization: 'Basic ' + (new Buffer(spotify.clientId + ':' + spotify.secret).toString('base64'))
+    },
+    json: true,
+  };
+
+  request.post(authOptions, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      const { access_token, refresh_token } = body;
+
+      getSpotifyUser(access_token)
+        .then(user => userCtrl.createUser(user))
+        .then(user => res.send({
+          userInfo: user,
+          access_token,
+          refresh_token,
+        }));
+    } else {
+      res.status(400);
+    }
+  });
 };
+

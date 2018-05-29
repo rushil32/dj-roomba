@@ -2,10 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 @mixin placeholder-color($color) {
-  input {
+  input, textarea {
     &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
       color: $color;
     }

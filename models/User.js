@@ -3,16 +3,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  googleId: String,
+  spotifyId: String,
   email: String,
-  firstName: String,
-  lastName: String,
+  name: String,
   image: String,
-  notes: [{
+  party: {
     type: Schema.Types.ObjectId,
-    ref: 'Note',
-    default: [],
-  }],
+    ref: 'Party',
+  },
   createdOn: { type: Date, default: Date.now },
 });
 

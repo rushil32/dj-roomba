@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 
 const config = require('./config');
 const usersRouter = require('./routes/userRoutes');
-const notesRouter = require('./routes/noteRoutes');
+const partyRouter = require('./routes/partyRoutes');
+const spotifyRouter = require('./routes/spotifyRoutes');
 
 mongoose.connect(config.dbUrl);
 
@@ -21,7 +22,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/api/users', usersRouter);
-app.use('/api/notes', notesRouter);
+app.use('/api/parties', partyRouter);
+app.use('/api/spotify', spotifyRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

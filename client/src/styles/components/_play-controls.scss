@@ -1,0 +1,37 @@
+.play-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: $dark-grey-2;
+
+  i {
+    margin: 15px 20px;
+    color: white;
+    opacity: 0.6;
+    animation-name: spin;
+
+    &:hover {
+      color: $orange;
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    &.animated {
+      opacity: 1;
+    }
+  }
+
+  img {
+    max-height: 30px;
+    border-radius: 50%;
+    margin: 15px;
+  }
+}
+
+.play-controls.active {
+  background-color: $brightgreek;
+}

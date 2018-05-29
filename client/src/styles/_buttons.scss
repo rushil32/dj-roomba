@@ -1,0 +1,18 @@
+.btn {
+  border-radius: 40px;
+  transition: 0.2s;
+  text-transform: uppercase;
+  font-size: 11px;
+  padding: 10px 20px;
+}
+
+.btn-primary, .btn-primary:disabled {
+  background-color: $watermelon-light;
+  border: none;
+}
+
+.btn-primary:focus,
+.btn-primary:hover,
+.btn-primary:active {
+  background-color: $watermelon;
+}

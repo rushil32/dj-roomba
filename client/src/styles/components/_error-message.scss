@@ -1,0 +1,15 @@
+.error-message {
+  position: fixed;
+  bottom: 54px;
+  left: 0;
+  width: 100%;
+  background-color: $watermelon;
+  text-align: center;
+  padding: 10px;
+
+  span {
+    color: white;
+    font-size: 14px;
+    font-weight: 300;
+  }
+}

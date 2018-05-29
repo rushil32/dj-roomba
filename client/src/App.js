@@ -1,34 +1,75 @@
-import axios from 'axios';
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import axios from 'axios';
+import cookie from 'js-cookie';
 
-import Editor from './components/editor';
-import Login from './components/login';
-import "./App.css";
 
+import { getUrlParams, removeHashParams } from './util/generalHelpers';
+import Dash from './components/dash';
+import Party from './components/party';
+import './App.css';
 
 class App extends Component {
-  state = {
-    userData: {}
-  };
+  constructor(props) {
+    super(props);
 
-  setUserData = (userData) => this.setState({ userData });
-  
-  getUserData = () => {
-    axios.get('/api/users/current').then(
-      res => this.setUserData(res.data.user),
-      error => console.error,
-    );
+    this.state = {
+      userInfo: {},
+      setUser: this.setUser,
+    };
   }
 
-  componentDidMount() { this.getUserData(); }
+  setUser = userInfo => this.setState({ userInfo })
+
+  getUserInfo = () => {
+    axios.get('/api/users/info')
+      .then(res => {
+        cookie.set('spotify_access', res.data.newToken);
+        this.setUser(res.data.user);
+      });
+  }
+
+  loginSpotify = (code, state) => {
+    debugger;
+    axios.post('/api/users/spotify-login', {
+      code: removeHashParams(code),
+      state
+    }).then(
+      res => {
+        this.setUser(res.data.userInfo);
+
+        cookie.set('spotify_access', res.data.access_token);
+        cookie.set('spotify_refresh', res.data.refresh_token);
+      },
+      err => console.log(err),
+    )
+  }
+
+  componentDidMount() {
+    const params = getUrlParams();
+    const code = params.code || null;
+    const state = params.state || null;
+    const spotifyToken = cookie.get('spotify_access');
+    
+    if (spotifyToken)
+      this.getUserInfo();
+    else if (code)
+      this.loginSpotify(code, state);
+  }
 
   render() {
-    const { userData } = this.state;
-    
-    return userData.email 
-            ? (<Editor userData={userData} setUserData={this.setUserData} />)
-            : (<Login userData={userData} setUserData={this.setUserData} />);
+    return (
+      <Router>
+        <div>
+          <Route exact path="/" component={(props) => (
+            <Dash {...props} userInfo={this.state.userInfo} />
+          )}/>
+          <Route path="/party/:id" component={(props) => (
+            <Party {...props} userInfo={this.state.userInfo} />
+          )}/>
+        </div>
+      </Router>
+    );
   }
 }
 

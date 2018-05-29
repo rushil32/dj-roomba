@@ -1,0 +1,22 @@
+.party {
+  max-width: 650px;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 15px 15px 70px;
+
+  li {
+    color: white;
+  }
+
+  &__search-toggle {
+    color: rgba(255,255,255,0.4);
+    background-color: rgba(255,255,255,0.15);
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 25px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

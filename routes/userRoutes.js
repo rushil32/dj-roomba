@@ -5,8 +5,10 @@ const authCtrl = require('../controllers/authController');
 
 const router = express.Router();
 
-router.get('/current', userCtrl.getData);
+router.get('/spotify-auth', authCtrl.spotifyAuth);
 
-router.post('/auth', authCtrl.authenticate);
+router.get('/info', authCtrl.getUserInfo);
+
+router.post('/spotify-login', authCtrl.spotifyLogin);
 
 module.exports = router;
