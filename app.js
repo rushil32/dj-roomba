@@ -26,7 +26,7 @@ app.use('/api/parties', partyRouter);
 app.use('/api/spotify', spotifyRouter);
 
 app.get('*', (req, res) => {
-  res.send('Hit the catch all route');
+  res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
 
 // catch 404 and forward to error handler
