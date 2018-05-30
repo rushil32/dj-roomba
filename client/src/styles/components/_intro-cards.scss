@@ -3,6 +3,10 @@
   flex-direction: row;
   margin-bottom: 60px;
 
+  @media (max-width: 767.98px) {
+    margin-bottom: 40px;
+  }
+
   a:hover,
   a:active, {
     h3, p {
@@ -15,6 +19,15 @@
 
     h3 {
       margin: 10px 0 20px;
+    }
+    @media (max-width: 767.98px) {
+      padding-left: 0;
+    }
+  }
+
+  &__left {
+    @media (max-width: 767.98px) {
+      display: none;
     }
   }
 

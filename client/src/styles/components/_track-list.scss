@@ -36,6 +36,10 @@
     &.now-playing {
       background-color: $orange;
     }
+
+    @media (max-width: 767.98px) {
+      padding: 12px;
+    }
   }
 
   p {
@@ -64,5 +68,9 @@
     font-size: 11px;
     opacity: 0.6;
     margin-left: -20px;
+
+    @media (max-width: 767.98px) {
+      margin-left: -10px;
+    }
   }
 }

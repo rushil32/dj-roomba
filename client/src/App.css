@@ -2507,11 +2507,17 @@ h2 {
   font-family: 'Poppins', sans-serif;
   color: white;
   font-weight: 300; }
+  @media (max-width: 767.98px) {
+    h2 {
+      font-size: 24px; } }
 
 h3 {
   font-size: 24px;
   font-weight: 300;
   color: white; }
+  @media (max-width: 767.98px) {
+    h3 {
+      font-size: 18px; } }
 
 p {
   font-size: 14px;
@@ -2527,6 +2533,9 @@ label {
   text-transform: uppercase;
   font-size: 11px;
   padding: 10px 20px; }
+  @media (max-width: 767.98px) {
+    .btn {
+      width: 100%; } }
 
 .btn-primary, .btn-primary:disabled {
   background-color: #ff6b81;
@@ -2626,7 +2635,7 @@ p {
     border-radius: 3px; }
 
 .dash {
-  padding-top: 10vh;
+  padding-top: 40px;
   height: 100vh;
   background: url("assets/dash-bg.jpg") no-repeat;
   background-size: cover;
@@ -2659,6 +2668,9 @@ p {
   display: flex;
   flex-direction: row;
   margin-bottom: 60px; }
+  @media (max-width: 767.98px) {
+    .intro-card {
+      margin-bottom: 40px; } }
   .intro-card a:hover h3, .intro-card a:hover p,
   .intro-card a:active h3,
   .intro-card a:active p {
@@ -2667,6 +2679,12 @@ p {
     padding-left: 20px; }
     .intro-card__right h3 {
       margin: 10px 0 20px; }
+    @media (max-width: 767.98px) {
+      .intro-card__right {
+        padding-left: 0; } }
+  @media (max-width: 767.98px) {
+    .intro-card__left {
+      display: none; } }
   .intro-card__preheader {
     opacity: 0.7;
     display: flex;
@@ -2838,6 +2856,9 @@ p {
     margin-bottom: 25px; }
     .party__search-toggle:hover {
       cursor: pointer; }
+    @media (max-width: 767.98px) {
+      .party__search-toggle {
+        margin-bottom: 0; } }
 
 .search-overlay {
   background-color: rgba(0, 0, 0, 0.85);
@@ -2931,6 +2952,9 @@ p {
       color: #222224; }
   .track-list li.now-playing {
     background-color: #ff6348; }
+  @media (max-width: 767.98px) {
+    .track-list li {
+      padding: 12px; } }
 
 .track-list p {
   opacity: 0.6;
@@ -2952,6 +2976,9 @@ p {
   font-size: 11px;
   opacity: 0.6;
   margin-left: -20px; }
+  @media (max-width: 767.98px) {
+    .track-list span {
+      margin-left: -10px; } }
 
 .play-controls {
   display: flex;
@@ -2973,6 +3000,9 @@ p {
       cursor: pointer; }
     .play-controls i.animated {
       opacity: 1; }
+    @media (max-width: 767.98px) {
+      .play-controls i {
+        margin: 15px; } }
   .play-controls img {
     max-height: 30px;
     border-radius: 50%;

@@ -2,7 +2,6 @@ import React from 'react';
 import cookie from 'js-cookie';
 import axios from 'axios';
 
-import { getParty } from '../../util/partyHelpers';
 import * as spotifyUtil from '../../util/spotifyHelpers';
 import * as partyUtil from '../../util/partyHelpers';
 
@@ -31,17 +30,9 @@ class Party extends React.Component {
   initSocket = () => {
     const socket = io();
 
-    socket.on('vote', (partyId, trackId) => {
-      if (this.state.partyInfo._id === partyId) {
-        setTimeout(this.getPartyInfo, 100);
-      }
-    })
-
-    socket.on('add-track', (partyId) => {
-      if (this.state.partyInfo._id === partyId) {
-        setTimeout(this.getPartyInfo, 100);
-      }
-    })
+    socket.on('vote', this.getPartyInfo)
+    socket.on('add-track', this.getPartyInfo)
+    socket.on('remove-track', this.getPartyInfo)
 
     this.setState({ socket });
   }
@@ -51,26 +42,15 @@ class Party extends React.Component {
   toggleError = (text) => this.setState(prevState => ({ showAlert: !prevState.showAlert, alertText: text }));
 
   componentDidMount() { 
-    this.getPartyInfo();
-    this.initSocket();
-
-    spotifyUtil.getDeviceStatus()
-      .then(res => {
-        console.log(res)
-      });
-    
-    spotifyUtil.getPlayerStatus()
-      .then(res => {
-        console.log(res)
-      });
-  }
-
-  sortTracks = (tracks) => tracks.sort((a, b) => b.votes.length - a.votes.length)
-
-  getPartyInfo = () => {
     const { id } = this.props.match.params;
-    getParty(id).then(res => this.setState({ partyInfo: res }));
+    
+    this.getPartyInfo(id); 
+    this.initSocket(); 
   }
+
+  sortTracks = (tracks) => tracks.sort((a, b) => b.votes.length - a.votes.length);
+
+  getPartyInfo = (id) => partyUtil.getParty(id).then(res => this.setState({ partyInfo: res }));
 
   addTrack = (trackData) => {
     partyUtil
@@ -79,34 +59,41 @@ class Party extends React.Component {
         this.setState({ partyInfo: res })
         this.state.socket.emit('add-track', res._id);
 
-        return spotifyUtil.getPlayerStatus();
+        if (this.state.playActive) this.resumePlay()
       })
-      .then(res => {
-        if (this.state.playActive) this.resumePlayback(res);
-      });
   }
 
   vote = (trackId) => {
     const partyId = this.state.partyInfo._id;
 
-    this.state.socket.emit('vote', partyId, trackId);
+    this.state.socket.emit('vote', partyId);
 
     partyUtil.toggleVote(partyId, trackId)
       .then(res => this.setState({ partyInfo: res }));
   }
 
-  resumePlayback = (currentState) => {
+  resumePlay = () => {
     const { currentTrack } = this.state;
-    
-    if (
-      currentState.is_playing === false || 
-      currentTrack.trackId !== currentState.item.id
-    ) {
-      this.startPlay();
-    }
+
+    spotifyUtil.isTrackPlaying(currentTrack)
+      .then((state) => {
+        if (state.track && !state.playing) {
+          this.startPlayer();
+        }
+      })
+  }
+
+  pausePlay = () => {
+    spotifyUtil.pause();
+    this.setState({ playActive: false, showAlert: false });
   }
 
   startPlay = () => {
+    if (this.state.playActive) return;
+    this.playNext();
+  }
+
+  playNext = () => {
     this.setState({ 
       playActive: true,
       showAlert: false,
@@ -119,21 +106,21 @@ class Party extends React.Component {
     
     const nextTrack = playList[0];
     
+    this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
+    
     spotifyUtil.playTrack(nextTrack.trackId)
-      .then(res => partyUtil.removeTrack(partyInfo._id, nextTrack._id))
+      .then(res => {
+        this.state.socket.emit('remove-track', partyInfo._id);
+        
+        return partyUtil.removeTrack(partyInfo._id, nextTrack._id);
+      })
       .then(res => this.setState({ partyInfo: res, currentTrack: nextTrack, showError: false }))
       .catch(err => {
-        console.log(err);
         this.setState({ playActive: false });
         this.toggleError('Could not connect to Spotify.');
+        
+        clearInterval(this.playTimer);
       });
-    
-    this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
-  }
-
-  stopPlay = () => {
-    spotifyUtil.pauseTrack();
-    this.setState({ playActive: false, showAlert: false });
   }
 
   render() {
@@ -161,7 +148,8 @@ class Party extends React.Component {
         <Alert text={alertText} toggle={showAlert} />
         <PlayControls
           startPlay={this.startPlay}
-          stopPlay={this.stopPlay}
+          stopPlay={this.pausePlay}
+          playNext={this.playNext}
           userInfo={this.props.userInfo} 
           playActive={playActive}
           hostControls={isHost}

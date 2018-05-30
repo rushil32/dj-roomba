@@ -2,12 +2,20 @@ h2 {
   font-family: 'Poppins', sans-serif;
   color: white;
   font-weight: 300;
+
+  @media (max-width: 767.98px) {
+    font-size: 24px;
+  }
 }
 
 h3 {
   font-size: 24px;
   font-weight: 300;
   color: white;
+
+  @media (max-width: 767.98px) {
+    font-size: 18px;
+  }
 }
 
 p {
