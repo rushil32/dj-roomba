@@ -106,7 +106,7 @@ class Party extends React.Component {
     
     const nextTrack = playList[0];
     
-    this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
+    this.playTimer = setTimeout(this.playNext, nextTrack.duration + 2000);
     
     spotifyUtil.playTrack(nextTrack.trackId)
       .then(res => {
