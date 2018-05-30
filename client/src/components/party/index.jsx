@@ -50,7 +50,20 @@ class Party extends React.Component {
 
   toggleError = (text) => this.setState(prevState => ({ showAlert: !prevState.showAlert, alertText: text }));
 
-  componentDidMount() { this.getPartyInfo(); this.initSocket(); }
+  componentDidMount() { 
+    this.getPartyInfo();
+    this.initSocket();
+
+    spotifyUtil.getDeviceStatus()
+      .then(res => {
+        console.log(res)
+      });
+    
+    spotifyUtil.getPlayerStatus()
+      .then(res => {
+        console.log(res)
+      });
+  }
 
   sortTracks = (tracks) => tracks.sort((a, b) => b.votes.length - a.votes.length)
 
@@ -107,12 +120,13 @@ class Party extends React.Component {
     const nextTrack = playList[0];
     
     spotifyUtil.playTrack(nextTrack.trackId)
-    .then(res => partyUtil.removeTrack(partyInfo._id, nextTrack._id))
-    .then(res => this.setState({ partyInfo: res, currentTrack: nextTrack, showError: false }))
-    .catch(err => {
-      console.log(err);
-      this.toggleError('Could not connect to Spotify. To connect make sure your app is open and playing music.');
-    });
+      .then(res => partyUtil.removeTrack(partyInfo._id, nextTrack._id))
+      .then(res => this.setState({ partyInfo: res, currentTrack: nextTrack, showError: false }))
+      .catch(err => {
+        console.log(err);
+        this.setState({ playActive: false });
+        this.toggleError('Could not connect to Spotify.');
+      });
     
     this.playTimer = setTimeout(this.startPlay, nextTrack.duration);
   }
