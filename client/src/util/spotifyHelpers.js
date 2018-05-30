@@ -75,17 +75,3 @@ export function getPlayerStatus() {
     );
   });
 }
-
-export function isTrackPlaying(track) {
-  return new Promise((resolve, reject) => {
-    getPlayerStatus()
-      .then(
-        state => resolve({
-          track: track.trackId !== state.item.id,
-          playing: state.is_playing,
-        }),
-        err => reject(err),
-      );
-  });
-}
-
