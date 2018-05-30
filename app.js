@@ -25,6 +25,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/parties', partyRouter);
 app.use('/api/spotify', spotifyRouter);
 
+app.get('*', (req, res) => {
+  res.send('Hit the catch all route');
+});
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
