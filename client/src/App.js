@@ -30,7 +30,6 @@ class App extends Component {
   }
 
   loginSpotify = (code, state) => {
-    debugger;
     axios.post('/api/users/spotify-login', {
       code: removeHashParams(code),
       state
