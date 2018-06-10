@@ -5,8 +5,9 @@ import cookie from 'js-cookie';
 
 
 import { getUrlParams, removeHashParams } from './util/generalHelpers';
-import Dash from './components/dash';
+import Intro from './components/intro';
 import Party from './components/party';
+import Nav from './components/common/Nav';
 import './App.css';
 
 class App extends Component {
@@ -60,8 +61,9 @@ class App extends Component {
     return (
       <Router>
         <div>
+          { this.state.userInfo._id && (<Nav />) }
           <Route exact path="/" component={(props) => (
-            <Dash {...props} userInfo={this.state.userInfo} />
+            <Intro {...props} userInfo={this.state.userInfo} />
           )}/>
           <Route path="/party/:id" component={(props) => (
             <Party {...props} userInfo={this.state.userInfo} />

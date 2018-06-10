@@ -1,0 +1,40 @@
+// Common modal styles
+.modal-content {
+  background-color: $dark-grey-1;
+
+  p {
+    opacity: 0.6;
+    margin: 0;
+  }
+}
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.modal-header {
+  padding-bottom: 0;
+
+  h5 {
+    opacity: 0.5;
+    margin-bottom: 10px;
+  }
+}
+
+.modal-content {
+  padding: 5px;
+}
+
+.modal-backdrop.show {
+  opacity: 0.8;
+}
+
+.close {
+  text-shadow: none;
+  opacity: 0.9;
+  padding-bottom: 0;
+
+  span {
+    color: white;
+  }
+}

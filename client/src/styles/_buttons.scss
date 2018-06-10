@@ -11,12 +11,24 @@
 }
 
 .btn-primary, .btn-primary:disabled {
-  background-color: $watermelon-light;
+  background: $brightgreek-light;
+  padding: 12px 35px;
   border: none;
 }
 
-.btn-primary:focus,
-.btn-primary:hover,
-.btn-primary:active {
-  background-color: $watermelon;
+.btn-link {
+  color: $brightgreek-light;
 }
+
+.btn-primary:focus:enabled,
+.btn-primary:hover:enabled,
+.btn-primary:active:enabled {
+  background-color: $brightgreek;
+}
+
+.btn-link:focus:enabled,
+.btn-link:hover:enabled,
+.btn-link:active:enabled {
+  color: $brightgreek;
+}
+

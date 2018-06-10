@@ -1,17 +1,16 @@
 const Party = require('../models/Party');
+const { shuffle } = require('../helpers/util');
 
-const userCtrl = require('./userController');
+const { ObjectId } = require('mongoose').Types;
 
 exports.create = (req, res) => {
-  const { title, description, host } = req.body;
+  const { title, host } = req.body;
   const newParty = new Party({
     title,
-    description,
     host,
   });
 
   newParty.save((err, party) => {
-    userCtrl.updateUserParty(host, party._id);
     res.send(party);
   });
 };
@@ -21,8 +20,20 @@ exports.getParty = (req, res) => {
 
   Party
     .findOne({ _id: partyId })
+    .populate('host')
+    .populate('guests')
     .exec((err, party) => {
       res.send(party);
+    });
+};
+
+exports.getUserList = (req, res) => {
+  const { userId } = req.params;
+
+  Party
+    .find({ host: userId })
+    .exec((err, parties) => {
+      res.send(parties);
     });
 };
 
@@ -35,61 +46,48 @@ exports.getAll = (req, res) => {
     });
 };
 
-exports.toggleVote = (req, res) => {
-  const { partyId, trackId } = req.body;
+function getTrackData(userId, tracks) {
+  return tracks.map(track => ({
+    owner: new ObjectId(userId),
+    trackId: track.id,
+    name: track.name,
+    artist: track.artists[0].name,
+    album: track.album.name,
+    image: track.album.images[0].url,
+    trackUrl: track.uri,
+    previewUrl: track.preview_url,
+    duration: track.duration_ms,
+  }));
+}
 
-  Party.findOne(
-    { _id: partyId },
-    'tracks',
-    (err, party) => {
-      const updatedParty = party;
-      const trackIndex = party.tracks.findIndex(track => track.trackId === trackId);
-      const { votes } = party.tracks[trackIndex];
-      const userIp = req.connection.remoteAddress;
+exports.addTracks = (req, res) => {
+  const { userId, partyId } = req.body;
+  const tracks = getTrackData(userId, req.body.tracks);
 
-      if (votes.indexOf(userIp) > -1) {
-        updatedParty.tracks[trackIndex].votes = votes.filter(vote => vote !== userIp);
-      } else {
-        updatedParty.tracks[trackIndex].votes.push(userIp);
-      }
-
-      updatedParty.save();
-      res.send(updatedParty);
-    },
-  );
+  Party
+    .findOneAndUpdate(
+      { _id: partyId },
+      { $push: { tracks: { $each: tracks }, guests: new ObjectId(userId) } },
+      { new: true },
+    )
+    .populate('host')
+    .populate(['guests'])
+    .exec((err, party) => res.send(party));
 };
 
-exports.addTrack = (req, res) => {
-  const {
-    trackId,
-    name,
-    artist,
-    album,
-    image,
-    trackUrl,
-    previewUrl,
-    duration,
-  } = req.body.trackData;
 
-  Party.findOneAndUpdate(
-    { _id: req.body.partyId },
-    {
-      $push: {
-        tracks: {
-          trackId,
-          name,
-          artist,
-          album,
-          image,
-          trackUrl,
-          previewUrl,
-          duration,
-        },
-      },
-    },
-    { new: true },
-    (err, party) => res.send(party),
-  );
+exports.shuffleTracks = (req, res) => {
+  const { partyId } = req.params;
+
+  Party
+    .findOne({ _id: partyId })
+    .populate('host')
+    .populate(['guests'])
+    .exec((err, party) => {
+      party.tracks = shuffle(party.tracks);
+      party.save();
+      res.send(party);
+    });
 };
 
 exports.removeTrack = (req, res) => {

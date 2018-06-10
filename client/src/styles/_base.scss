@@ -1,9 +1,16 @@
 html, body {
   font-family: 'Open Sans', sans-serif;
   background-color: $dark-grey-1;
+  min-height: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
 }
 
 p {
+  margin: 0;
   font-size: 14px;
 }
 

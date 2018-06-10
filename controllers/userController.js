@@ -61,7 +61,7 @@ exports.getData = (req, res) => {
   const userId = authCtrl.verifyToken(token);
 
   if (!userId) {
-    res.status(403).send("Unauthorized user");
+    res.status(403).send('Unauthorized user');
     return;
   }
 

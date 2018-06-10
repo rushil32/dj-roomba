@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const trackSchema = new Schema({
+  owner: { type: Schema.Types.ObjectId, ref: 'User' },
+  revealed: { type: Boolean, default: false },
+  trackId: String,
   name: String,
   artist: String,
-  trackId: String,
-  votes: [String],
-  image: String,
   album: String,
+  image: String,
   trackUrl: String,
   previewUrl: String,
   duration: Number,
@@ -16,11 +17,10 @@ const trackSchema = new Schema({
 
 const partySchema = new Schema({
   title: String,
-  description: String,
   host: { type: Schema.Types.ObjectId, ref: 'User' },
-  private: { type: Boolean, default: false },
   active: { type: Boolean, default: true },
   tracks: [trackSchema],
+  guests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdOn: { type: Date, default: Date.now },
   updatedOn: { type: Date, default: Date.now },
 });

@@ -1,0 +1,11 @@
+.banner-cta {
+  text-align: center;
+  background-color: $clearchill;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

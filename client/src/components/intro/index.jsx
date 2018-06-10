@@ -1,47 +1,48 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+import { withRouter } from 'react-router-dom';
 import cookie from 'js-cookie';
 
-import { hoursSince } from '../../util/generalHelpers';
-
-import LivePartyCard from './LivePartyCard';
-import LoginCard from './LoginCard';
-import CreatePartyCard from './CreatePartyCard';
+import Login from './Login';
+import CreateParty from './CreateParty';
 
 class Intro extends Component {
   static propTypes = {
-    userData: PropTypes.object,
-    setUserData: PropTypes.func,
+    userInfo: PropTypes.object,
   }
 
   static defaultProps = {
-    userData: {},
-    setUser: () => {}
+    userInfo: {},
   }
 
-  redirectToSpotify = () => {
-    axios.get('/api/users/spotify-auth').then(
-      res => window.location.href = res.data.url,
-      err => console.error(err),
-    )
+  checkForRedirect = () => {
+    setTimeout(() => {
+      const REDIRECT_COOKIE = '_djr_redirect';
+      const redirect = cookie.get(REDIRECT_COOKIE);
+
+      if (redirect) {
+        cookie.remove(REDIRECT_COOKIE);
+        this.props.history.push(redirect);
+      }
+    }, 0);
   }
 
-  isPartyActive = (startTime) => {
-    return  Math.floor(hoursSince(new Date(), new Date(startTime))) < 48;
+  componentDidMount() {
+    this.checkForRedirect();
   }
 
   render() {
-    const { userData } = this.props;
+    const { userInfo } = this.props;
+    const introBlock = userInfo._id 
+                      ? (<CreateParty userInfo={userInfo} />)
+                      : (<Login />);
 
-    if (userData.party && this.isPartyActive(userData.party.createdOn)) {
-      return (<LivePartyCard userData={userData} />)
-    } else if (userData._id) {
-      return (<CreatePartyCard userData={userData} />)
-    } else {
-      return (<LoginCard handleLogin={this.redirectToSpotify} />)
-    }
+    return (
+      <div className="intro">
+        {introBlock}
+      </div>
+    );
   }
 }
 
-export default Intro;
+export default withRouter(Intro);

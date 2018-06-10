@@ -7,10 +7,6 @@ const userSchema = new Schema({
   email: String,
   name: String,
   image: String,
-  party: {
-    type: Schema.Types.ObjectId,
-    ref: 'Party',
-  },
   createdOn: { type: Date, default: Date.now },
 });
 

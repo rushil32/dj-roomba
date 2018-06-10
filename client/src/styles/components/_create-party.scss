@@ -1,0 +1,27 @@
+.create-party {
+  text-align: left;
+  min-width: 320px;
+
+  &__user {
+    text-align: center;
+
+    img {
+      max-height: 90px;
+      border-radius: 50%;
+      margin-bottom: 30px;
+    }
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  input {
+    margin-bottom: 15px;
+  }
+
+  button {
+    margin-top: 25px;
+  }
+}

@@ -25,7 +25,7 @@ function getSpotifyUser(accessToken) {
     };
 
     request.get(options, (error, response, body) => {
-      if (body.error) reject(body.error.status);
+      if (body && body.error) reject(body.error.status);
       resolve(body);
     });
   });
@@ -50,7 +50,7 @@ function refreshSpotifyToken(refreshToken) {
       }
     });
   });
-};
+}
 
 exports.getUserInfo = (req, res) => {
   const { spotify_access, spotify_refresh } = req.cookies;
@@ -98,7 +98,7 @@ exports.spotifyLogin = (req, res) => {
           refresh_token,
         }));
     } else {
-      res.status(400);
+      res.status(400).send();
     }
   });
 };

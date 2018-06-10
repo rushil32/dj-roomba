@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 const config = require('./config');
 const usersRouter = require('./routes/userRoutes');
 const partyRouter = require('./routes/partyRoutes');
-const spotifyRouter = require('./routes/spotifyRoutes');
 
 mongoose.connect(config.dbUrl);
 
@@ -23,7 +22,6 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/api/users', usersRouter);
 app.use('/api/parties', partyRouter);
-app.use('/api/spotify', spotifyRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build/index.html'));

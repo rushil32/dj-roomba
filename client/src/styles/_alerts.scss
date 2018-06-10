@@ -1,4 +1,16 @@
 .alert {
   margin: 10px;
   font-size: 14px;
+  border: none;
+  margin: 0 0 20px;
+
+  i {
+    vertical-align: middle;
+    margin-right: 7px;
+    font-size: 18px;
+  }
+}
+
+.alert-warning {
+  background: $sand;
 }

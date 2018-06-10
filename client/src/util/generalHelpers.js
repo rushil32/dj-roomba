@@ -41,3 +41,4 @@ export function formatTime(mins) {
   if (mins < MINS_IN_DAY) return `${Math.floor(mins / 60)} h`;
   return `${Math.floor(mins / MINS_IN_DAY)} d`;
 }
+

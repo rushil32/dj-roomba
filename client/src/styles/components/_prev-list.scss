@@ -1,0 +1,47 @@
+.prev-list {
+  margin-top: 50px;
+
+  h3 {
+    text-align: center;
+  }
+
+  p {
+    margin: 0 0 10px;
+  }
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__title {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  a > div {
+    padding: 15px;
+    transition: 0.2s;
+
+    &:hover {
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+    }
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  li {
+    transition: 0.2s;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+
+    p:nth-child(2) {
+      opacity: 0.5;
+    }
+  }
+}

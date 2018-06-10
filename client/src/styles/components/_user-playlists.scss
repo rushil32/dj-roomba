@@ -1,0 +1,19 @@
+.user-playlists {
+  p {
+    margin-bottom: 10px;
+  }
+  
+  li {
+    background: rgba(255,255,255,0.05);
+    padding: 8px;
+    margin: 7px 0;
+    border-radius: 3px;
+    opacity: 0.7;
+    font-size: 14px;
+
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+}

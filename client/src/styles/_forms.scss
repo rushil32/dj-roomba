@@ -1,0 +1,29 @@
+input, textarea {
+  background: none;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid rgba(255,255,255,0.15);
+  padding: 10px 10px;
+  width: 100%;
+  color: white;
+  transition: 0.2s;
+
+  &:active, &:focus {
+    outline: none;
+    border-color: $brightgreek-light;
+  }
+}
+
+form {
+  p {
+    margin-bottom: 10px;
+  }
+}
+
+.form-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@include placeholder-color(rgba(255,255,255,0.2));

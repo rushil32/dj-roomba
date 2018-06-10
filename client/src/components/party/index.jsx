@@ -1,181 +1,80 @@
-import React from 'react';
-import cookie from 'js-cookie';
-import axios from 'axios';
+import React from "react";
+import * as partyUtil from "../../util/partyHelpers";
 
-import * as spotifyUtil from '../../util/spotifyHelpers';
-import * as partyUtil from '../../util/partyHelpers';
-
-import Search from './Search';
-import TrackList from './TrackList';
-import Alert from '../common/Alert';
-import PlayControls from './playControls';
-import io from 'socket.io-client';
+import PartyHome from './PartyHome';
+import Login from '../intro/Login';
 
 class Party extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       partyInfo: {},
-      showSearch: false,
-      playActive: false,
-      currentTrack: {},
-      showAlert: false,
-      alertText: '',
-      socket: {}
+      activeTab: 'playlist',
     };
-
-    this.playNextTimer = {};
-    this.pollTimer = {};
   }
 
-  initSocket = () => {
-    const socket = io();
-
-    socket.on('vote', this.getPartyInfo)
-    socket.on('add-track', this.getPartyInfo)
-    socket.on('remove-track', this.getPartyInfo)
-
-    this.setState({ socket });
+  componentDidMount() {
+    this.getPartyInfo(this.props.match.params.id);
   }
 
-  toggleSearch = () => {
-    this.setState(prevState => ({ 
-      showSearch: !prevState.showSearch 
-    }));
-  }
-  toggleError = (text) => {
-    this.setState(prevState => ({ 
-      showAlert: !prevState.showAlert, 
-      alertText: text 
-    }))
+  setPartyInfo = (partyInfo) => this.setState({ partyInfo })
+
+  getPartyInfo = async (id) => {
+    const partyInfo = await partyUtil.getParty(id);
+    this.setState({ partyInfo });
   };
 
-  componentDidMount() { 
-    this.getPartyInfo(this.props.match.params.id); 
-    this.initSocket(); 
+  addUserTracks = async (userId, partyId) => {
+    const updatedParty = await partyUtil.addUserFavs(userId, partyId);
+    this.setPartyInfo(updatedParty);
   }
 
-  sortTracks = (tracks) => tracks.sort((a, b) => b.votes.length - a.votes.length)
+  isUserConnected = () => {
+    const { partyInfo } = this.state;
+    const { userInfo } = this.props;
 
-  getPartyInfo = (id) => {
-    partyUtil.getParty(id).then(res => {
-      this.setState({ partyInfo: res });
-    });
-  };
+    if (!partyInfo.guests) return false;
 
-  addTrack = (trackData) => {
-    partyUtil
-      .addTrack(this.state.partyInfo._id, trackData)
-      .then(res => {
-        this.setState({ partyInfo: res })
-        this.state.socket.emit('add-track', res._id);
-
-        if (this.state.playActive) this.startPlayLoop()
-      })
+    return partyInfo
+      .guests
+      .filter(guest => guest._id === userInfo._id)
+      .length > 0;
   }
 
-  vote = (trackId) => {
-    const partyId = this.state.partyInfo._id;
-
-    this.state.socket.emit('vote', partyId);
-
-    partyUtil.toggleVote(partyId, trackId)
-      .then(res => this.setState({ partyInfo: res }));
-  }
-
-  pausePlay = () => {
-    spotifyUtil.pause();
-    clearInterval(this.playNextTimer);
-
-    this.setState({ playActive: false, showAlert: false });
-  }
-
-  playTrack = (track) => {
+  isUserHost = () => {
+    const { userInfo } = this.props;
     const { partyInfo } = this.state;
 
-    spotifyUtil.playTrack(track.trackId)
-      .then(res => {
-        this.state.socket.emit('remove-track', partyInfo._id);
-        
-        return partyUtil.removeTrack(partyInfo._id, track._id);
-      })
-      .then(res => this.setState({ partyInfo: res, currentTrack: track, showError: false }))
-      .catch(err => {
-        this.setState({ playActive: false });
-        this.toggleError('Could not connect to Spotify.');
-        
-        clearInterval(this.playNextTimer);
-      });
-  }
+    if (!partyInfo.host) return false;
 
-  getNextTrack = () => {
-    if (this.state.partyInfo.tracks.length === 0) return false;
-    
-    const playList = this.sortTracks(this.state.partyInfo.tracks);
-    return playList[0];
-  }
-
-  playNext = () => {
-    const nextTrack = this.getNextTrack();
-    if (nextTrack) this.playTrack(nextTrack);
-  }
-
-  startPlayLoop = () => {
-    this.setState({ 
-      playActive: true,
-      showAlert: false,
-    });
-
-    const nextTrack = this.getNextTrack();
-
-    if (!nextTrack) return;
-    
-    spotifyUtil.getPlayerStatus()
-      .then(status => {
-        if (!status.is_playing) this.playTrack(nextTrack);
-      });
-    
-    this.playNextTimer = setTimeout(this.startPlayLoop, 5000);
+    return userInfo._id === partyInfo.host._id;
   }
 
   render() {
-    const { partyInfo, showSearch, currentTrack, showAlert, alertText, playActive } = this.state;
-    const isHost = this.props.userInfo._id && (this.props.userInfo._id === partyInfo.host);
-    const partyClass = playActive ? 'party active' : 'party';
-
-    const searchOverlay = showSearch && (
-      <Search
-        trackList={partyInfo.tracks}
-        toggleOverlay={this.toggleSearch}
-        addTrack={this.addTrack}
-      />
-    );
-
+    const { userInfo } = this.props;
+    const { partyInfo } = this.state;
+    
     return (
-      <div className={partyClass}>
-        {searchOverlay}
-        <div className="party__search-toggle" onClick={this.toggleSearch}>Search for track</div>
-        <TrackList
-          currentTrack={currentTrack}
-          tracks={this.sortTracks(partyInfo.tracks || [])}
-          handleVote={this.vote}
-        />
-        <Alert text={alertText} toggle={showAlert} />
-        <PlayControls
-          startPlay={this.startPlayLoop}
-          stopPlay={this.pausePlay}
-          playNext={this.playNext}
-          userInfo={this.props.userInfo} 
-          playActive={playActive}
-          hostControls={isHost}
-        />
+      <div className="party">
+        { 
+          userInfo._id 
+          ? (<PartyHome
+              userInfo={userInfo}
+              partyInfo={partyInfo}
+              isUserConnected={this.isUserConnected()}
+              isHost={this.isUserHost()}
+              setPartyInfo={this.setPartyInfo}
+              addTracks={() => this.addUserTracks(userInfo._id, partyInfo._id)} 
+            />)
+          : (<Login />)
+        }
       </div>
-    );
+    )
   }
 }
 
 Party.defaultProps = {
   userInfo: {}
-}
+};
 
 export default Party;
