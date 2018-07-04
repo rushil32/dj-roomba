@@ -12,7 +12,7 @@ module.exports = {
       + 'playlist-read-collaborative '
       + 'playlist-modify-public '
       + 'playlist-modify-private',
-    redirectUri: 'http://localhost:3000',
+    redirectUri: 'https://dj-rooomba.herokuapp.com/',
     token: '',
     tokenRefreshTime: '',
   },
