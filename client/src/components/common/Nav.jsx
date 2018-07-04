@@ -9,16 +9,14 @@ function Nav() {
       <a className="navbar-brand" href="#">
         <img src={logo} alt="DJ Roomba" />
       </a>
-      <div className="">
-        <div className="navbar-nav">
-          <Link className="nav-item nav-link active" to="/">
-            <i className="material-icons">home</i>
-          </Link>
-          <Link className="nav-item nav-link" to="/">
-            <i className="material-icons">exit_to_app</i>
-          </Link>
-        </div>
-      </div>
+      <ul class="nav justify-content-end">
+        <Link className="nav-item nav-link active" to="/">
+          <i className="material-icons">home</i>
+        </Link>
+        <Link className="nav-item nav-link" to="/">
+          <i className="material-icons">exit_to_app</i>
+        </Link>
+      </ul>
     </nav>
   );
 }

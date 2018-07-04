@@ -4,4 +4,8 @@
   padding: 40px;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 767.98px) {
+    padding: 20px;
+  }
 }

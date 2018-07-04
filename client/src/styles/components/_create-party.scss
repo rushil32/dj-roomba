@@ -1,6 +1,10 @@
 .create-party {
   text-align: left;
-  min-width: 320px;
+  width: 100%;
+
+  @media (min-width: 767.98px) {
+    max-width: 450px;
+  }
 
   &__user {
     text-align: center;

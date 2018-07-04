@@ -7,7 +7,9 @@
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "server": "nodemon ./bin/www",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "eslint": "eslint",
+    "test": "mocha"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -29,10 +31,12 @@
     "spotify-web-api-js": "^0.24.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.7.0",
+    "mocha": "^5.2.0"
   }
 }

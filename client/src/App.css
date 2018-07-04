@@ -2663,8 +2663,10 @@ input:-moz-placeholder, textarea:-moz-placeholder {
   /* Firefox 18- */
   color: rgba(255, 255, 255, 0.2); }
 
-.navbar img {
-  max-height: 25px; }
+.navbar {
+  justify-content: space-between; }
+  .navbar img {
+    max-height: 25px; }
 
 .tabs {
   display: flex;
@@ -2725,6 +2727,9 @@ input:-moz-placeholder, textarea:-moz-placeholder {
   padding: 40px;
   align-items: center;
   justify-content: center; }
+  @media (max-width: 767.98px) {
+    .intro {
+      padding: 20px; } }
 
 .login {
   height: 80vh;
@@ -2739,7 +2744,10 @@ input:-moz-placeholder, textarea:-moz-placeholder {
 
 .create-party {
   text-align: left;
-  min-width: 320px; }
+  width: 100%; }
+  @media (min-width: 767.98px) {
+    .create-party {
+      max-width: 450px; } }
   .create-party__user {
     text-align: center; }
     .create-party__user img {
@@ -2758,19 +2766,20 @@ input:-moz-placeholder, textarea:-moz-placeholder {
   margin-top: 50px; }
   .prev-list h3 {
     text-align: center; }
-  .prev-list p {
-    margin: 0 0 10px; }
   .prev-list__header {
     display: flex;
     justify-content: space-between; }
+    .prev-list__header p:nth-child(1) {
+      margin-bottom: 7px; }
   .prev-list__title {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 11px;
-    opacity: 0.6; }
+    opacity: 0.6;
+    margin-bottom: 20px; }
   .prev-list a > div {
-    padding: 15px;
+    padding: 20px;
     transition: 0.2s; }
     .prev-list a > div:hover {
       background: rgba(255, 255, 255, 0.05);
@@ -2779,9 +2788,12 @@ input:-moz-placeholder, textarea:-moz-placeholder {
     text-decoration: none; }
   .prev-list li {
     transition: 0.2s;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-bottom: 10px;
+    border-radius: 4px; }
     .prev-list li p:nth-child(2) {
-      opacity: 0.5; }
+      opacity: 0.5;
+      margin: 0; }
 
 .party {
   max-width: 650px;
